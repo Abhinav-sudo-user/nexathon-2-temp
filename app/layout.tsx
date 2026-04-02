@@ -41,7 +41,7 @@ export const dmMono = DM_Mono({ weight: '400', subsets: ['latin'], variable: '--
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={` bg-black text-white ${bebas.variable} ${dmMono.variable} ${infiniteBeyond.variable} cursor-none`}>
+      <body style={{cursor: "none"}} className={` bg-black text-white ${bebas.variable} ${dmMono.variable} ${infiniteBeyond.variable} cursor-none`}>
         <CustomCursor />
         <NavigationWrapper />
         {children}

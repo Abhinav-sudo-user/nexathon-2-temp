@@ -39,7 +39,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: none;
+  overflow: hidden; /* was "none" — fixed */
 }
 
 #trail-container {
@@ -72,7 +72,7 @@ body::before {
   position: relative;
   z-index: 10;
   line-height: 1;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .hero-edition {
@@ -210,7 +210,7 @@ body::before {
 
 .bento-cell {
   background: var(--bg);
-  padding: 60px 40px; 
+  padding: 60px 40px;
   position: relative;
   overflow: hidden;
   transition: background 0.5s ease;
@@ -329,7 +329,7 @@ body::before {
   pointer-events: none;
 }
 .ticker-outer::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
-.ticker-outer::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.ticker-outer::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
 
 .ticker-track {
   display: flex;
@@ -341,7 +341,7 @@ body::before {
 
 .sponsor-card {
   flex-shrink: 0;
-  width: 260px; /* Fixed width matched with TSX calculation */
+  width: 260px;
   height: 130px;
   border: 2px solid transparent;
   margin-right: -2px;
@@ -402,110 +402,156 @@ body::before {
   color: var(--dim);
 }
 
+/* ── TABLET ── */
 @media (max-width: 900px) {
   .bento { grid-template-columns: 1fr; }
-  #stats, .sponsors-header, #footer { padding: 80px 40px; }
+  #stats, #footer { padding: 80px 40px; }
+  .sponsors-header { padding: 0 40px; }
   .bento-cell { min-height: 280px; }
 }
 
+/* ── MOBILE ── */
 @media (max-width: 768px) {
-  .stats-header-right, .sponsors-sub {
-    opacity: 0;
-    pointer-events: none;
-  }
-}
 
-/* =========================================
-   Mobile Responsiveness (Max-width: 768px)
-   ========================================= */
-
-@media screen and (max-width: 768px) {
-  /* -- HERO -- */
+  /* --- HERO --- */
   #hero {
-    min-height: 80vh; /* Adjust if it's currently 100vh */
-    padding: 2rem 1rem;
+    height: 100svh; /* svh avoids mobile browser chrome overlap */
+    overflow: hidden;
   }
-  
+
+  /* Scale the giant title down so it never overflows */
   .hero-word {
-    font-size: clamp(3rem, 12vw, 6rem); /* Scales text fluidly */
+    font-size: clamp(2.8 rem, 18vw, 5rem);
+    text-align: center;
     word-break: break-word;
-    text-align: center;
-    line-height: 1.1;
-  }
-
-  .hero-edition {
-    font-size: 1rem;
-    text-align: center;
-  }
-
-  /* -- STATS HEADER -- */
-  .stats-header {
-    flex-direction: column; /* Stack header elements */
-    align-items: flex-start;
-    gap: 1.5rem;
+    overflow-wrap: break-word;
     padding: 0 1rem;
   }
 
-  .stats-headline {
-    font-size: 2.5rem;
-    line-height: 1.2;
+  /* Hide trail images on mobile — they cause layout bleed */
+  .trail-img { display: none; }
+
+  /* Reposition edition tag so it doesn't clip */
+  .hero-edition {
+    font-size: 0.58rem;
+    letter-spacing: 0.22em;
+    bottom: 28px;
+    white-space: normal;
+    text-align: center;
+    width: 90%;
   }
 
+  /* Hide vertical scroll hint — wastes space on mobile */
+  .hero-scroll-hint { display: none; }
+
+  /* --- STATS --- */
+  #stats {
+    padding: 72px 24px 100px;
+    min-height: auto;
+  }
+
+  /* Shrink the huge watermark so it doesn't bleed horizontally */
   .stats-bg-text {
-    font-size: 15rem; /* Shrink the giant background 'N1' */
-    opacity: 0.05;
+    font-size: 52vw;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
-  /* -- BENTO GRID -- */
-  .bento {
-    display: grid;
-    grid-template-columns: 1fr; /* Stack cards natively on mobile */
-    gap: 1rem;
-    padding: 1rem;
+  .stats-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
   }
 
-  /* Optional: Keep 2 columns for smaller stats if you prefer */
-  /*
-  .bento {
-    grid-template-columns: repeat(2, 1fr); 
+  /* Hide the right-hand descriptor text */
+  .stats-header-right,
+  .sponsors-sub {
+    display: none;
   }
-  .bento-cell:nth-child(2n) { ... } 
-  */
+
+  .stats-headline {
+    font-size: clamp(2.2rem, 10vw, 3.5rem);
+    line-height: 1.05;
+  }
+
+  /* --- BENTO --- */
+  .bento {
+    grid-template-columns: 1fr;
+    gap: 1px;
+  }
 
   .bento-cell {
-    padding: 1.5rem;
-    min-height: 120px;
+    padding: 36px 28px;
+    min-height: 200px;
   }
 
   .stat-val {
-    font-size: 2rem;
+    font-size: clamp(2.4rem, 10vw, 3.5rem);
+    margin-bottom: 12px;
   }
 
   .stat-lbl {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
   }
 
-  /* -- SPONSORS -- */
+  /* --- SPONSORS TICKER ---
+     Fix: reduce fade width so cards aren't fully hidden,
+     and shrink card width to fit viewport cleanly         */
   .sponsors-header {
     flex-direction: column;
-    padding: 2rem 1rem;
-    text-align: left;
+    align-items: flex-start;
+    padding: 0 24px;
+    margin-bottom: 48px;
+    gap: 1rem;
   }
 
   .sponsors-headline {
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+
+  /* Narrower fade edges so logos aren't eaten on small screens */
+  .ticker-outer::before,
+  .ticker-outer::after {
+    width: 48px;
+  }
+
+  /* Smaller cards that actually fit on phone widths */
+  .sponsor-card {
+    width: 160px;
+    height: 100px;
+    padding: 18px 22px;
+  }
+
+  .sponsor-card img {
+    max-height: 44px;
+  }
+
+  /* --- FOOTER --- */
+  #footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: 32px 24px;
+  }
+}
+
+/* ── VERY SMALL PHONES (≤ 390px) ── */
+@media (max-width: 390px) {
+  .hero-word {
+    font-size: clamp(2.2rem, 16vw, 3rem);
   }
 
   .sponsor-card {
-    width: 180px; /* Make sponsor cards slightly smaller on mobile */
-    margin: 0 1rem;
+    width: 130px;
+    height: 88px;
+    padding: 14px 16px;
   }
 
-  /* -- FOOTER -- */
-  #footer {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-    padding: 2rem 1rem;
+  .sponsor-card img {
+    max-height: 36px;
   }
 }

@@ -8,7 +8,7 @@ import './Nexathon.css';
 gsap.registerPlugin(ScrollTrigger);
 
 const SPONSORS = [
-  { src: './src/assets/appwrite.svg', alt: 'Appwrite' },
+  { src: './src/assets/appwrite.png', alt: 'Appwrite' },
   { src: './src/assets/codecrafter.webp', alt: 'CodeCrafter' },
   { src: './src/assets/fft.png', alt: 'FFT' },
   { src: './src/assets/fx-header.png', alt: 'FX' },
@@ -185,7 +185,7 @@ export default function Nexathon() {
 
         <div id="trail-container" ref={trailContainerRef}></div>
 
-        <h1 className="hero-word">NEXATHON</h1>
+        <h1 style={{fontSize: "10rem"}}className="hero-word">NEXATHON</h1>
 
         <p className="hero-edition">Flashback — Version 1</p>
 

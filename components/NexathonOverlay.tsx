@@ -39,23 +39,31 @@ export default function NexathonOverlay() {
 
         .massive-heading {
           font-family: var(--font-infinite-beyond), sans-serif;
-          font-size: clamp(2.5rem, 1vw, 6.5rem); /* Desktop: HUGE headings */
+          font-size: clamp(2.5rem, 5vw, 6.5rem);
           color: #fff;
           line-height: 1;
           letter-spacing: 0.0em;
           margin-bottom: 1.25rem;
-          overflow:clip;
+          overflow-wrap: break-word;
+          word-break: break-word;
           word-spacing:-0.01rem;
         }
         
 
         @media (max-width: 768px) {
           .responsive-page {
-            justify-content: center; /* Mobile: Center align */
-            padding: 1.5rem;
+            justify-content: center;
+            padding: 1rem;
           }
           .responsive-card {
-            text-align: center; /* Mobile: Center text */
+            text-align: center;
+            max-width: calc(100vw - 2rem);
+            background: transparent;
+            border: none;
+            border-radius: 0;
+          }
+          .massive-heading {
+            font-size: clamp(1.8rem, 10vw, 3rem);
           }
         }
       `}</style>

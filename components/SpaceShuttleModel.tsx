@@ -21,6 +21,7 @@ export default function SpaceShuttleModel() {
   const { viewport } = useThree();
   
   const isMobile = viewport.width < 6;
+  const isTablet = viewport.width >= 6 && viewport.width < 10;
 
   useFrame((state, delta) => {
     if (!scrollGroupRef.current || !wobbleGroupRef.current) return;
@@ -32,22 +33,36 @@ export default function SpaceShuttleModel() {
     // 1. SCROLL ANIMATIONS (Outer Group)
     // --------------------------------------------------------
 
-    // State 0: Initial (Page 1) — Tilted nicely, perfectly upright
-    const pos0 = new THREE.Vector3(0, isMobile ? 3 : 0, 0);
-    const rot0 = new THREE.Euler(0.2, -Math.PI / 6, 0.1); // Angled slightly, but not tumbling
-    const scale0 = isMobile ? 0.4 : 1.7;
+    // State 0: Initial (Page 1) — Tilted nicely
+    const pos0 = isMobile
+      ? new THREE.Vector3(0, 0.5, -4)        // Mobile: centered on screen, pushed back behind text
+      : isTablet
+        ? new THREE.Vector3(2, 1, -1)        // Tablet: offset right, slightly above
+        : new THREE.Vector3(0, 0, 0);        // Desktop: centered
+    const rot0 = isMobile
+      ? new THREE.Euler(0.3, -Math.PI / 5, 0.15)   // Mobile: slightly more tilt for drama
+      : new THREE.Euler(0.2, -Math.PI / 6, 0.1);
+    const scale0 = isMobile ? 0.8 : isTablet ? 1.2 : 1.7;
 
     // State 1: Background (Page 2)
-    const pos1 = isMobile ? new THREE.Vector3(0, 5, -6) : new THREE.Vector3(3, 2, -5);
+    const pos1 = isMobile
+      ? new THREE.Vector3(0, 0.5, -6)        // Mobile: centered, pushed further back
+      : isTablet
+        ? new THREE.Vector3(2, 3, -4)
+        : new THREE.Vector3(3, 2, -5);
     const rot1 = new THREE.Euler(0.2, Math.PI * -1.5, Math.PI * 0.2);
-    const scale1 = isMobile ? 0.2 : 1.5;
+    const scale1 = isMobile ? 0.65 : isTablet ? 0.9 : 1.5;
 
-    // State 2: Close-up (Page 3) — Positioned right (x=3), facing left (negative Y rotation)
-    // State 2: Close-up (Page 3) — Positioned right (x=3), climbing towards top-left
-    const pos2 = isMobile ? new THREE.Vector3(0, 4.5, -3) : new THREE.Vector3(3, 0, 3);
-    // X: Nose up, Y: Diagonal left, Z: Slight bank/roll
-    const rot2 = new THREE.Euler(Math.PI / 6, -Math.PI / 3, Math.PI / 12); 
-    const scale2 = isMobile ? 0.8 : 1.5;
+    // State 2: Close-up (Page 3) — Positioned right, climbing towards top-left
+    const pos2 = isMobile
+      ? new THREE.Vector3(0, 0, -3)          // Mobile: centered on screen
+      : isTablet
+        ? new THREE.Vector3(2, 1, 1)
+        : new THREE.Vector3(3, 0, 3);
+    const rot2 = isMobile
+      ? new THREE.Euler(Math.PI / 5, -Math.PI / 4, Math.PI / 10)  // Mobile: dynamic angle
+      : new THREE.Euler(Math.PI / 6, -Math.PI / 3, Math.PI / 12);
+    const scale2 = isMobile ? 0.7 : isTablet ? 1.1 : 1.5;
 
     // Convert Euler angles to Quaternions for smooth transitions
     const q0_target = new THREE.Quaternion().setFromEuler(rot0);
