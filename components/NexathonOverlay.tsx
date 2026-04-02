@@ -127,7 +127,7 @@ export default function NexathonOverlay() {
           className="responsive-card"
         >
           <p style={{ fontFamily: '"DM Mono", monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.35em', textTransform: 'uppercase', fontSize: '10px', marginBottom: '1rem' }}>THANK YOU</p>
-          <h2 style={{fontSize:"clamp(2.5rem, 1vw, 6.5rem)" }} className="massive-heading">SPONSORS</h2>
+          <h2 style={{fontSize:"clamp(2.2rem, 1vw, 6.5rem)" }} className="massive-heading">SPONSORS</h2>
           <div style={{ width: '100%', overflow: 'hidden', borderRadius: '0.75rem', position: 'relative', cursor: 'none' }}>
             <motion.div drag="x" dragConstraints={{ right: 0, left: -700 }} style={{ display: 'flex', gap: '0.75rem', width: 'max-content' }}>
               {CompanyArchive().map((company) => (
