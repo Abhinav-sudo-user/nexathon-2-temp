@@ -438,18 +438,34 @@ export default function LightsaberScene() {
           font-family: 'DM Mono', monospace; font-weight: 300;
           font-size: clamp(0.5rem, 1.1vw, 0.7rem);
           letter-spacing: 0.15em; text-transform: uppercase;
-          color: rgba(255,255,255,0.8); margin-top: 1.1rem;
-          position: absolute;       
-          bottom: 43.5%;            
-          left: 50%;                 
-          transform: translateX(-50%); 
-          text-align: center;       
-          width: 90%;                
+          color: rgba(255,255,255,0.8);
+          margin-top: 1.4rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1.8em;
+          width: 90%;
         }
+        .ls-mid-sub-col {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.25em;
+          line-height: 1.6;
+        }
+        .ls-mid-sub-choice {
+          font-weight: 500;
+          letter-spacing: 0.2em;
+        }
+        .ls-mid-sub-dark  .ls-mid-sub-choice { color: #ff4444; }
+        .ls-mid-sub-light .ls-mid-sub-choice { color: #00eeff; }
         .ls-mid-bar {
-          width: 1px; height: 56px; margin: 1.6rem auto 0;
+          display: inline-block;
+          width: 1px; height: 56px;
           background: linear-gradient(to bottom, #ff3333, #ffffff 50%, #00ffff);
-          border-radius: 1px; animation: ls-barB 2.8s ease-in-out infinite;
+          border-radius: 1px;
+          animation: ls-barB 2.8s ease-in-out infinite;
+          flex-shrink: 0;
         }
         @keyframes ls-barB {
           0%,100% { opacity: 0.4; transform: scaleY(1); }
@@ -566,8 +582,15 @@ export default function LightsaberScene() {
         <div className={pageClass(1)}>
           <p className="ls-mid-eyebrow">The choice is yours</p>
           <h2 className="ls-mid-title">Choose Your Path</h2>
-          <p className="ls-mid-sub">↑ scroll up for dark &nbsp;·&nbsp; ·&nbsp;·&nbsp;·&nbsp;scroll down for light ↓</p>
-          <div className="ls-mid-bar" />
+          <div className="ls-mid-sub">
+            <span className="ls-mid-sub-col ls-mid-sub-dark">
+              scroll up for<br /><span className="ls-mid-sub-choice">dark ↑</span>
+            </span>
+            <span className="ls-mid-bar" />
+            <span className="ls-mid-sub-col ls-mid-sub-light">
+              scroll down for<br /><span className="ls-mid-sub-choice">light ↓</span>
+            </span>
+          </div>
         </div>
 
         {/* ── PAGE 2: LIGHT SIDE ── */}
