@@ -437,8 +437,14 @@ export default function LightsaberScene() {
         .ls-mid-sub {
           font-family: 'DM Mono', monospace; font-weight: 300;
           font-size: clamp(0.5rem, 1.1vw, 0.7rem);
-          letter-spacing: 0.44em; text-transform: uppercase;
+          letter-spacing: 0.15em; text-transform: uppercase;
           color: rgba(255,255,255,0.8); margin-top: 1.1rem;
+          position: absolute;       
+          bottom: 43.5%;            
+          left: 50%;                 
+          transform: translateX(-50%); 
+          text-align: center;       
+          width: 90%;                
         }
         .ls-mid-bar {
           width: 1px; height: 56px; margin: 1.6rem auto 0;
@@ -560,7 +566,7 @@ export default function LightsaberScene() {
         <div className={pageClass(1)}>
           <p className="ls-mid-eyebrow">The choice is yours</p>
           <h2 className="ls-mid-title">Choose Your Path</h2>
-          <p className="ls-mid-sub">↑ scroll up for dark &nbsp;·&nbsp; scroll down for light ↓</p>
+          <p className="ls-mid-sub">↑ scroll up for dark &nbsp;·&nbsp; ·&nbsp;·&nbsp;·&nbsp;scroll down for light ↓</p>
           <div className="ls-mid-bar" />
         </div>
 
