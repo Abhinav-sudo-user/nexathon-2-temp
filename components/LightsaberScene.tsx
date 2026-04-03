@@ -221,8 +221,9 @@ export default function LightsaberScene() {
 
     // Scene + Camera
     const scene  = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 10);
+    const isMobileSetup = window.innerWidth < 768;
+    const camera = new THREE.PerspectiveCamera(isMobileSetup ? 58 : 50, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, isMobileSetup ? 13 : 10);
 
     // Stars
     const sBuf = new Float32Array(7000 * 3);
@@ -276,12 +277,17 @@ export default function LightsaberScene() {
         overlayEl.style.background = `rgba(0,30,70,${f * 0.42})`;
       }
 
-      // X formation
-      const drama  = Math.abs(p - 0.5) * 2;
-      const angle  = lerp(0.82, 0.96, drama);
-      const hSpread = lerp(0.85, 1.1,  drama);
-      const hiltY  = lerp(-1.5, -1.8,  drama);
-      const bob    = Math.sin(t * 0.45) * 0.035;
+      // X formation — mobile: smaller scale, shallower angle
+      const isMobile = window.innerWidth < 768;
+      const drama    = Math.abs(p - 0.5) * 2;
+      const angle    = lerp(isMobile ? 0.58 : 0.82, isMobile ? 0.70 : 0.96, drama);
+      const hSpread  = lerp(isMobile ? 0.58 : 0.85, isMobile ? 0.78 : 1.1,  drama);
+      const hiltY    = lerp(isMobile ? -4.8 : -1.5, isMobile ? -5.2 : -1.8, drama);
+      const bob      = Math.sin(t * 0.45) * 0.035;
+      const scale    = isMobile ? 0.72 : 1;
+
+      saberL.group.scale.setScalar(scale);
+      saberR.group.scale.setScalar(scale);
 
       saberL.group.position.set(-hSpread, hiltY + bob,  0.06);
       saberL.group.rotation.z =  angle;
@@ -294,7 +300,7 @@ export default function LightsaberScene() {
       // Camera drift
       camera.position.x = Math.sin(t * 0.11) * 0.2;
       camera.position.y = Math.cos(t * 0.08) * 0.12;
-      camera.lookAt(0, 1.4, 0);
+      camera.lookAt(0, isMobile ? 0.6 : 1.4, 0);
 
       // Stars drift
       stars.rotation.y = t * 0.008;
@@ -431,13 +437,35 @@ export default function LightsaberScene() {
         .ls-mid-sub {
           font-family: 'DM Mono', monospace; font-weight: 300;
           font-size: clamp(0.5rem, 1.1vw, 0.7rem);
-          letter-spacing: 0.44em; text-transform: uppercase;
-          color: rgba(255,255,255,0.8); margin-top: 1.1rem;
+          letter-spacing: 0.15em; text-transform: uppercase;
+          color: rgba(255,255,255,0.8);
+          margin-top: 1.4rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1.8em;
+          width: 90%;
         }
+        .ls-mid-sub-col {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.25em;
+          line-height: 1.6;
+        }
+        .ls-mid-sub-choice {
+          font-weight: 500;
+          letter-spacing: 0.2em;
+        }
+        .ls-mid-sub-dark  .ls-mid-sub-choice { color: #ff4444; }
+        .ls-mid-sub-light .ls-mid-sub-choice { color: #00eeff; }
         .ls-mid-bar {
-          width: 1px; height: 56px; margin: 1.6rem auto 0;
+          display: inline-block;
+          width: 1px; height: 56px;
           background: linear-gradient(to bottom, #ff3333, #ffffff 50%, #00ffff);
-          border-radius: 1px; animation: ls-barB 2.8s ease-in-out infinite;
+          border-radius: 1px;
+          animation: ls-barB 2.8s ease-in-out infinite;
+          flex-shrink: 0;
         }
         @keyframes ls-barB {
           0%,100% { opacity: 0.4; transform: scaleY(1); }
@@ -554,8 +582,15 @@ export default function LightsaberScene() {
         <div className={pageClass(1)}>
           <p className="ls-mid-eyebrow">The choice is yours</p>
           <h2 className="ls-mid-title">Choose Your Path</h2>
-          <p className="ls-mid-sub">↑ scroll up for dark &nbsp;·&nbsp; scroll down for light ↓</p>
-          <div className="ls-mid-bar" />
+          <div className="ls-mid-sub">
+            <span className="ls-mid-sub-col ls-mid-sub-dark">
+              scroll up for<br /><span className="ls-mid-sub-choice">dark ↑</span>
+            </span>
+            <span className="ls-mid-bar" />
+            <span className="ls-mid-sub-col ls-mid-sub-light">
+              scroll down for<br /><span className="ls-mid-sub-choice">light ↓</span>
+            </span>
+          </div>
         </div>
 
         {/* ── PAGE 2: LIGHT SIDE ── */}
@@ -564,7 +599,7 @@ export default function LightsaberScene() {
           <h1 className="ls-light-title">The Light Side</h1>
           <p className="ls-light-eyebrow">There is no emotion, there is peace</p>
           <p className="ls-light-para">
-            You build for stability, order, and the advancement of the Republic. Utilizing a rule-based scoring framework, the Light Side focuses on technical depth, precision, and solving the galaxy’s most pressing challenges through clean, objective engineering.
+            You build for stability, order, and the advancement of the Republic. Utilizing a rule-based scoring framework, the Light Side focuses on technical depth, precision, and solving the galaxy's most pressing challenges through clean, objective engineering.
 </p>
         </div>
 
