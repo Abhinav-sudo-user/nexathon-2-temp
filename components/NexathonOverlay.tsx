@@ -2,6 +2,7 @@
 
 import { Scroll } from '@react-three/drei';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { syne } from '../app/layout';
 import { CompanyArchive } from './Sponsors';
@@ -10,7 +11,11 @@ import {orbitronio, infiniteBeyond} from '../app/layout';
 // ─── Main overlay ──────────────────────────────────────────────────────
 export default function NexathonOverlay() {
   const router = useRouter();
-  
+  const [toast, setToast] = useState({ show: false, message: "" });
+ const showToast = (msg: string) => {
+   setToast({ show: true, message: msg });
+   setTimeout(() => setToast({ show: false, message: "" }), 2800);
+ ;}
   return (
     <Scroll html style={{ width: '100vw' }} >
       
@@ -69,10 +74,43 @@ export default function NexathonOverlay() {
             font-size: clamp(1.8rem, 10vw, 3rem);
           }
         }
+
+        .sponsor-track {
+          display: flex;
+          gap: 0.75rem;
+          width: max-content;
+          animation: loop-sponsors 40s linear infinite;
+        }
+
+        .sponsor-track:hover {
+          animation-play-state: paused;
+        }
+
+        @keyframes loop-sponsors {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(calc(-50% - 0.375rem)); }
+        }
       `}</style>
+
+        {toast.show && (
+        <div style={{
+          position: "fixed", bottom: "2rem", left: "50%",
+          transform: "translateX(-50%)", zIndex: 99999,
+          background: "rgba(15, 15, 15, 0.85)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          color: "#fff", fontSize: "0.8rem",
+          fontFamily: "'DM Mono', 'Courier New', monospace",
+          letterSpacing: "0.1em", textTransform: "uppercase",
+          padding: "14px 36px", whiteSpace: "nowrap",
+          backdropFilter: "blur(10px)", pointerEvents: "none",
+        }}>
+          {toast.message}
+        </div>
+      )}
 
 
       {/* Page 1 — What is Nexathon */}
+      
       <div className="responsive-page">
         <motion.div
           initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }}
@@ -87,12 +125,12 @@ export default function NexathonOverlay() {
           </p>
           <br />
           <button style={{ fontFamily: '"DM Mono", monospace', padding: '1rem 3rem', background: '#fff', color: '#000', fontSize: 'clamp(10px, 2vw, 13px)', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', border: 'none', borderRadius: '100px', cursor: 'none', boxShadow: '0 0 30px rgba(255,255,255,0.25)', transition: 'transform 0.15s ease, background 0.2s ease', marginTop: '1rem' }}
-            onClick={() => router.push('/side')}
+            onClick={() => alert("Registration isn't open yet")}
             onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.05)')}
             onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
             onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.95)')}
             onMouseUp={e => (e.currentTarget.style.transform = 'scale(1.05)')}
-          >CHOOSE YOUR PATH</button>
+          >Register Now</button>
         </motion.div>
       </div>
 
@@ -115,13 +153,14 @@ export default function NexathonOverlay() {
                 </div>
               ))}
             </motion.div>
-            <div style={{ position: 'absolute', inset: '0 0 0 auto', width: '3rem', background: 'linear-gradient(to left, rgba(0,0,0,0.8), transparent)', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', inset: '0 auto 0 0', width: '3rem', background: 'linear-gradient(to right, rgba(0,0,0,0.8), transparent)', pointerEvents: 'none' }} />
+            {/* <div style={{ position: 'absolute', inset: '0 0 0 auto', width: '3rem', background: 'linear-gradient(to left, rgba(0,0,0,0.8), transparent)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: '0 auto 0 0', width: '3rem', background: 'linear-gradient(to right, rgba(0,0,0,0.8), transparent)', pointerEvents: 'none' }} /> */}
           </div>
           <p style={{ fontFamily: '"DM Mono", monospace', color: 'rgba(255,255,255,0.25)', fontSize: '9px', letterSpacing: '0.25em', textTransform: 'uppercase', marginTop: '1rem' }}>← Drag to explore →</p>
         </motion.div>
       </div>
 
+      {/* Page 3 — Contributions */}
       {/* Page 3 — Contributions */}
       <div className="responsive-page">
         <motion.div
@@ -130,25 +169,56 @@ export default function NexathonOverlay() {
           className="responsive-card"
         >
           <p style={{ fontFamily: '"DM Mono", monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.35em', textTransform: 'uppercase', fontSize: '10px', marginBottom: '1rem' }}>THANK YOU</p>
-          <h2 style={{fontSize:"clamp(2.2rem, 1vw, 6.5rem)" }} className="massive-heading">SPONSORS</h2>
-          <div style={{ width: '100%', overflow: 'hidden', borderRadius: '0.75rem', position: 'relative', cursor: 'none' }}>
-            <motion.div drag="x" dragConstraints={{ right: 0, left: -700 }} style={{ display: 'flex', gap: '0.75rem', width: 'max-content' }}>
-              {CompanyArchive().map((company) => (
-                <div key={company.id} className="group" style={{ width: 'clamp(140px, 35vw, 200px)', height: 'clamp(90px, 20vw, 130px)', background: 'rgba(255, 255, 255,0.9)', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.1)', cursor: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', userSelect: 'none', pointerEvents: 'auto', flexShrink: 0 }}>
-                  <img src={company.logoUrl} alt={company.name} className="w-[60%] h-auto max-h-[70%] object-contain grayscale transition-all duration-300 group-hover:grayscale-0 pointer-events-none" />
+          <h2 style={{ fontSize: "clamp(2.2rem, 1vw, 6.5rem)" }} className="massive-heading">SPONSORS</h2>
+          
+          <div style={{ width: '100%', overflow: 'hidden', borderRadius: '0.75rem', position: 'relative', cursor: 'grab' }}>
+            <motion.div 
+              drag="x" 
+              dragConstraints={{ right: 0, left: -1200 }} // Adjust based on content width
+              className="sponsor-track"
+              style={{ display: 'flex', gap: '0.75rem', width: 'max-content' }}
+            >
+              {/* Mapping 10 items (Sponsor 1-5 twice) for the infinite loop effect */}
+              {[1, 2, 3, 4, 5, 1, 2, 3, 4, 5].map((i, index) => (
+                <div 
+                  key={index} 
+                  style={{ 
+                    cursor : 'none',  
+                    width: 'clamp(160px, 36vw, 240px)', 
+                    height: 'clamp(100px, 22vw, 145px)', 
+                    background: 'rgba(255, 255, 255, 0.05)', 
+                    borderRadius: '0.75rem', 
+                    border: '1px solid rgba(255,255,255,0.1)', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    userSelect: 'none', 
+                    flexShrink: 0 
+                  }}
+                >
+                  <span style={{ fontFamily: '"DM Mono", monospace', color: 'rgba(255,255,255,0.4)', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>SPONSOR 0{i}</span>
+                  <span style={{ fontFamily: '"DM Mono", monospace', color: 'rgba(255,255,255,0.2)', fontSize: '9px', marginTop: '0.4rem', textTransform: 'uppercase' }}>OFFICIAL PARTNER</span>
                 </div>
               ))}
             </motion.div>
-            <div style={{ position: 'absolute', inset: '0 0 0 auto', width: '3rem', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', inset: '0 auto 0 0', width: '3rem', pointerEvents: 'none' }} />
+            
+            {/* Gradient Fades for depth */}
+            {/* <div style={{ position: 'absolute', inset: '0 0 0 auto', width: '3rem', background: 'linear-gradient(to left, rgba(0,0,0,0.8), transparent)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: '0 auto 0 0', width: '3rem', background: 'linear-gradient(to right, rgba(0,0,0,0.8), transparent)', pointerEvents: 'none' }} /> */}
           </div>
+
+          <p style={{ fontFamily: '"DM Mono", monospace', color: 'rgba(255,255,255,0.25)', fontSize: '9px', letterSpacing: '0.25em', textTransform: 'uppercase', marginTop: '1rem' }}></p>
           <br />
-          <button style={{ fontFamily: '"DM Mono", monospace', padding: '1rem 3rem', background: '#fff', color: '#000', fontSize: 'clamp(10px, 2vw, 13px)', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', border: 'none', borderRadius: '100px', cursor: 'none', boxShadow: '0 0 30px rgba(255,255,255,0.25)', transition: 'transform 0.15s ease, background 0.2s ease' }}
+          
+          <button 
+            style={{ fontFamily: '"DM Mono", monospace', padding: '1rem 3rem', background: '#fff', color: '#000', fontSize: 'clamp(10px, 2vw, 13px)', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', border: 'none', borderRadius: '100px', cursor: 'pointer', boxShadow: '0 0 30px rgba(255,255,255,0.25)', transition: 'transform 0.15s ease, background 0.2s ease' }}
+            onClick={() => alert("Registration for Sponsors is not open yet")}
             onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.05)')}
             onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-            onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.95)')}
-            onMouseUp={e => (e.currentTarget.style.transform = 'scale(1.05)')}
-          >JOIN THE FLEET</button>
+          >
+            JOIN THE FLEET
+          </button>
         </motion.div>
       </div>
     </Scroll>

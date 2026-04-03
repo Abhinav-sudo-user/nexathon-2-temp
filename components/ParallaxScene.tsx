@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { syne } from '../app/layout';
+import { infiniteBeyond } from '../app/layout';
 import { Audiowide } from 'next/font/google';
 
 const audiowide = Audiowide({
@@ -204,9 +204,9 @@ export default function ParallaxScene() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className={`${syne.className} text-white text-5xl md:text-8xl font-extrabold tracking-tighter uppercase mb-12`}
+              className={`${infiniteBeyond.className} text-white text-5xl md:text-8xl font-normal tracking-normal lowercase mb-12`}
             >
-              NEXATHON
+              Nexathon
             </motion.h1>
 
             {/* Loading bar container */}
@@ -286,7 +286,7 @@ export default function ParallaxScene() {
               },
             }}
           >
-            <span className={`${audiowide.className} text-white tracking-tighter font-extrabold text-[600px] leading-none opacity-20`}>
+            <span className={`${audiowide.className} text-white tracking-tighter font-extrabold text-[300px] sm:text-[400px] md:text-[600px] leading-none opacity-20`}>
               <p className='tracking-[-0.5rem]'>V2</p>
             </span>
           </motion.div>
@@ -337,8 +337,8 @@ export default function ParallaxScene() {
               },
             }}
           >
-            <h1 className={`${syne.className} text-white text-4xl md:text-7xl font-extrabold tracking-tighter uppercase selection:bg-red-600 selection:text-white pointer-events-auto`}>
-              NEXATHON
+            <h1 className={`${infiniteBeyond.className} text-white text-5xl sm:text-5xl md:text-7xl font-normal lowercase tracking-normal text-center selection:bg-red-600 selection:text-white pointer-events-auto`}>
+              Nexathon
             </h1>
             <p className="mt-4 text-gray-500 font-mono text-sm tracking-[0.3em] pointer-events-auto selection:bg-red-600">
               --THERE IS NO NEUTRAL--

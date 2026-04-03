@@ -147,3 +147,10 @@
   /* Ensure scrolling is still active */
   overflow-y: scroll; 
 }
+
+/* Restore default cursor on mobile / touch devices */
+@media (max-width: 768px), (pointer: coarse) {
+  *, body {
+    cursor: auto !important;
+  }
+}

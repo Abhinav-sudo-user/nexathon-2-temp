@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import * as THREE from 'three';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type Section = 0 | 1 | 2; 
+type Section = 0 | 1 | 2; // 0 = dark, 1 = neutral, 2 = light
 
 interface Saber {
   group:   THREE.Group;
@@ -53,26 +53,32 @@ function makeSaber(): Saber {
   const hM = new THREE.MeshStandardMaterial({ color: 0xb0a898, metalness: 0.90, roughness: 0.20 });
   const rM = new THREE.MeshStandardMaterial({ color: 0x1e1e22, metalness: 0.80, roughness: 0.35 });
 
+  // Grip
   group.add(new THREE.Mesh(new THREE.CylinderGeometry(0.115, 0.14, 1.35, 28), hM));
 
+  // Ridges
   for (let i = 0; i < 6; i++) {
     const r = new THREE.Mesh(new THREE.CylinderGeometry(0.133, 0.133, 0.046, 20), rM);
     r.position.y = -0.46 + i * 0.195;
     group.add(r);
   }
 
+  // Pommel
   const pm = new THREE.Mesh(new THREE.CylinderGeometry(0.165, 0.1, 0.21, 22), hM);
   pm.position.y = -0.78;
   group.add(pm);
 
+  // Guard ring
   const gd = new THREE.Mesh(new THREE.CylinderGeometry(0.195, 0.195, 0.065, 24), rM);
   gd.position.y = 0.72;
   group.add(gd);
 
+  // Emitter shroud
   const es = new THREE.Mesh(new THREE.CylinderGeometry(0.098, 0.118, 0.34, 22), hM);
   es.position.y = 0.9;
   group.add(es);
 
+  // Activation button
   const btnM = new THREE.MeshStandardMaterial({
     color: ic.clone(), emissive: ic.clone(), emissiveIntensity: 2.5,
   });
@@ -80,6 +86,7 @@ function makeSaber(): Saber {
   btn.position.set(0.135, 0.12, 0);
   group.add(btn);
 
+  // Blade tube
   const bladeM = new THREE.MeshStandardMaterial({
     color: ic.clone(), emissive: ic.clone(), emissiveIntensity: 3.5,
     transparent: true, opacity: 0.91, side: THREE.DoubleSide,
@@ -88,6 +95,7 @@ function makeSaber(): Saber {
   blade.position.y = 3.62;
   group.add(blade);
 
+  // Blade tip
   const tip = new THREE.Mesh(
     new THREE.SphereGeometry(0.043, 18, 9, 0, Math.PI * 2, 0, Math.PI / 2),
     bladeM,
@@ -95,6 +103,7 @@ function makeSaber(): Saber {
   tip.position.y = 6.32;
   group.add(tip);
 
+  // White core
   const coreM = new THREE.MeshStandardMaterial({
     color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 6,
     transparent: true, opacity: 0.86, side: THREE.DoubleSide,
@@ -103,6 +112,7 @@ function makeSaber(): Saber {
   core.position.y = 3.62;
   group.add(core);
 
+  // Glow halos
   const glowMs: THREE.MeshStandardMaterial[] = [];
   const halos: [number, number][] = [[0.11, 0.36], [0.2, 0.17], [0.31, 0.065]];
   halos.forEach(([rad, op]) => {
@@ -116,6 +126,7 @@ function makeSaber(): Saber {
     glowMs.push(gm);
   });
 
+  // Point light
   const ptL = new THREE.PointLight(ic.clone(), 3.8, 10);
   ptL.position.y = 4.3;
   group.add(ptL);
@@ -139,6 +150,7 @@ export default function LightsaberScene() {
 
   const [current, setCurrent] = useState<Section>(1);
 
+  // Mutable refs for animation loop — no re-render needed
   const stateRef = useRef({
     targetP:  0.5,
     smoothP:  0.5,
@@ -182,13 +194,13 @@ export default function LightsaberScene() {
       if (e.key === 'ArrowUp'   || e.key === 'PageUp')   tryScroll(-1);
     };
 
-    window.addEventListener('wheel',       onWheel,      { passive: false });
+    window.addEventListener('wheel',      onWheel,      { passive: false });
     window.addEventListener('touchstart', onTouchStart, { passive: true  });
     window.addEventListener('touchend',   onTouchEnd,   { passive: true  });
     window.addEventListener('keydown',    onKey);
 
     return () => {
-      window.removeEventListener('wheel',       onWheel);
+      window.removeEventListener('wheel',      onWheel);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchend',   onTouchEnd);
       window.removeEventListener('keydown',    onKey);
@@ -199,6 +211,7 @@ export default function LightsaberScene() {
   useEffect(() => {
     if (!canvasRef.current || !overlayRef.current) return;
 
+    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -206,11 +219,13 @@ export default function LightsaberScene() {
     renderer.toneMappingExposure = 1.3;
     canvasRef.current.appendChild(renderer.domElement);
 
+    // Scene + Camera
     const scene  = new THREE.Scene();
     const isMobileSetup = window.innerWidth < 768;
     const camera = new THREE.PerspectiveCamera(isMobileSetup ? 58 : 50, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, isMobileSetup ? 13 : 10);
 
+    // Stars
     const sBuf = new Float32Array(7000 * 3);
     for (let i = 0; i < sBuf.length; i++) sBuf[i] = (Math.random() - 0.5) * 200;
     const sGeo = new THREE.BufferGeometry();
@@ -221,11 +236,13 @@ export default function LightsaberScene() {
     );
     scene.add(stars);
 
+    // Sabers
     const saberL = makeSaber();
     const saberR = makeSaber();
     scene.add(saberL.group);
     scene.add(saberR.group);
 
+    // Lights
     scene.add(new THREE.AmbientLight(0x1a1820, 2.2));
     const dL = new THREE.DirectionalLight(0xffffff, 0.4);
     dL.position.set(4, 6, 5);
@@ -233,24 +250,27 @@ export default function LightsaberScene() {
     const rimL = new THREE.DirectionalLight(0x8899cc, 0.55);
     rimL.position.set(-5, 2, -6);
     scene.add(rimL);
-
     const clock      = new THREE.Clock();
     const overlayEl  = overlayRef.current;
 
+    // Render loop
     function animate() {
       stateRef.current.animId = requestAnimationFrame(animate);
       clock.getDelta();
       const t = clock.elapsedTime;
 
+      // Smooth snap
       stateRef.current.smoothP = lerp(stateRef.current.smoothP, stateRef.current.targetP, 0.075);
       const p = stateRef.current.smoothP;
 
+      // Saber colour: red → white → cyan
       const col = p <= 0.5
         ? lerpColor(0xff1111, 0xffffff, p * 2)
         : lerpColor(0xffffff, 0x00ddff, (p - 0.5) * 2);
       setSaberColor(saberL, col);
       setSaberColor(saberR, col);
 
+      // Overlay tint
       if (p < 0.5) {
         const f = (0.5 - p) * 2;
         overlayEl.style.background = `rgba(65,0,0,${f * 0.42})`;
@@ -259,6 +279,7 @@ export default function LightsaberScene() {
         overlayEl.style.background = `rgba(0,30,70,${f * 0.42})`;
       }
 
+      // X formation — mobile: smaller scale, shallower angle
       const isMobile = window.innerWidth < 768;
       const drama    = Math.abs(p - 0.5) * 2;
       const angle    = lerp(isMobile ? 0.58 : 0.82, isMobile ? 0.70 : 1.1, drama);
@@ -278,10 +299,12 @@ export default function LightsaberScene() {
       saberR.group.rotation.z = -angle;
       saberR.group.rotation.x =  0.05;
 
+      // Camera drift
       camera.position.x = Math.sin(t * 0.11) * 0.2;
       camera.position.y = Math.cos(t * 0.08) * 0.12;
       camera.lookAt(0, isMobile ? 0.6 : 1.4, 0);
 
+      // Stars drift
       stars.rotation.y = t * 0.008;
       stars.rotation.x = t * 0.003;
 
@@ -289,6 +312,7 @@ export default function LightsaberScene() {
     }
     animate();
 
+    // Resize handler
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -296,6 +320,7 @@ export default function LightsaberScene() {
     };
     window.addEventListener('resize', onResize);
 
+    // Cleanup
     return () => {
       cancelAnimationFrame(stateRef.current.animId);
       window.removeEventListener('resize', onResize);
@@ -306,6 +331,7 @@ export default function LightsaberScene() {
     };
   }, []);
 
+  // ── Page / dot class helpers ────────────────────────────────────────────────
   function pageClass(idx: number) {
     if (idx === current) return 'ls-page ls-active';
     if (idx < current)   return 'ls-page ls-above';
@@ -318,8 +344,10 @@ export default function LightsaberScene() {
       : 'ls-dot';
   }
 
+  // ── JSX ─────────────────────────────────────────────────────────────────────
   return (
     <>
+      {/* ── Injected styles ── */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
 
@@ -328,11 +356,11 @@ export default function LightsaberScene() {
           background: #000; color: #fff;
           font-family: 'DM Mono', monospace;
           overflow: hidden;
-          /* Prevents pull-to-refresh on mobile */
-          touch-action: none; 
-          overscroll-behavior-y: contain;
+          overscroll-behavior: none;
+          touch-action: pan-x;
         }
 
+        /* canvas layer */
         .ls-canvas { position: absolute; inset: 0; z-index: 0; }
         .ls-canvas canvas { display: block; }
         .ls-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
@@ -341,6 +369,7 @@ export default function LightsaberScene() {
           background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.75) 100%);
         }
 
+        /* pages */
         .ls-page {
           position: absolute; inset: 0; z-index: 10;
           display: flex; flex-direction: column;
@@ -355,6 +384,7 @@ export default function LightsaberScene() {
         .ls-page.ls-active { opacity: 1; pointer-events: auto; transform: translateY(0); }
         .ls-page.ls-below  { transform: translateY(28px); }
 
+        /* ── dark ── */
         .ls-dark-eyebrow {
           font-family: 'DM Mono', monospace; font-weight: 400;
           font-size: clamp(0.5rem, 1.2vw, 0.75rem);
@@ -366,13 +396,26 @@ export default function LightsaberScene() {
           font-size: clamp(2rem, 7vw, 5.5rem);
           letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
           color: #ff2020;
+          animation: ls-pulseR 6s ease-in-out infinite;
           overflow:hidden;
+        }
+          .ls-dark-title::selection{
+          background-color: #ff4136; 
+  color: #fff;  
+  text-shadow: none;       
+          }
+        @keyframes ls-pulseR {
         }
         .ls-dark-rule {
           width: 160px; height: 1px; margin: 1.4rem auto;
           background: linear-gradient(90deg, transparent, #ff3333, transparent);
           box-shadow: 0 0 7px rgba(255,0,0,0.5);
         }
+          .ls-dark-para::selection{
+          background-color: #ff4136ff; 
+  color: #fff;  
+  text-shadow: none;   
+          }
         .ls-dark-para {
           font-family: 'DM Mono', monospace; font-weight: 400;
           font-size: clamp(0.82rem, 1.6vw, 1.05rem);
@@ -381,6 +424,7 @@ export default function LightsaberScene() {
           max-width: 580px; margin: 0 auto;
         }
 
+        /* ── mid ── */
         .ls-mid-eyebrow {
           font-family: 'DM Mono', monospace; font-weight: 300;
           font-size: clamp(0.48rem, 1.1vw, 0.7rem);
@@ -417,8 +461,8 @@ export default function LightsaberScene() {
           font-weight: 500;
           letter-spacing: 0.2em;
         }
-        .ls-mid-sub-dark   .ls-mid-sub-choice { color: #ff4444; }
-        .ls-mid-sub-light  .ls-mid-sub-choice { color: #00eeff; }
+        .ls-mid-sub-dark  .ls-mid-sub-choice { color: #ff4444; }
+        .ls-mid-sub-light .ls-mid-sub-choice { color: #00eeff; }
         .ls-mid-bar {
           display: inline-block;
           width: 1px; height: 56px;
@@ -432,6 +476,7 @@ export default function LightsaberScene() {
           50%     { opacity: 0.9; transform: scaleY(1.12); }
         }
 
+        /* ── light ── */
         .ls-light-eyebrow {
           font-family: 'DM Mono', monospace; font-weight: 400;
           font-size: clamp(0.5rem, 1.2vw, 0.75rem);
@@ -444,7 +489,10 @@ export default function LightsaberScene() {
           letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
           color: #00eeff;
           padding:3px;
+          animation: ls-pulseC 6s ease-in-out infinite;
           overflow:hidden;
+        }
+        @keyframes ls-pulseC {
         }
         .ls-light-rule {
           width: 160px; height: 1px; margin: 1.4rem auto;
@@ -459,6 +507,7 @@ export default function LightsaberScene() {
           max-width: 580px; margin: 0 auto;
         }
 
+        /* ── dots ── */
         .ls-dots {
           position: absolute; right: 1.8rem; top: 50%; transform: translateY(-50%);
           z-index: 30; display: flex; flex-direction: column; gap: 10px;
@@ -474,6 +523,7 @@ export default function LightsaberScene() {
         .ls-dot.active-mid   { background: #ffffff; border-color: #fff;    transform: scale(1.5); box-shadow: 0 0 8px rgba(255,255,255,0.4); }
         .ls-dot.active-light { background: #00eeff; border-color: #00eeff; transform: scale(1.5); box-shadow: 0 0 8px rgba(0,220,255,0.7); }
 
+        /* ── label ── */
         .ls-label {
           position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%);
           z-index: 30; pointer-events: none;
@@ -485,10 +535,45 @@ export default function LightsaberScene() {
       `}</style>
 
       <div className="ls-root">
+        {/* Back button */}
+        <button 
+          onClick={() => router.push('/nexathon')}
+          style={{
+            position: 'absolute',
+            top: '2rem',
+            left: '2rem',
+            zIndex: 50,
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.3)',
+            color: '#fff',
+            padding: '0.6rem 1.2rem',
+            fontFamily: '"DM Mono", monospace',
+            fontSize: '0.75rem',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            backdropFilter: 'blur(5px)',
+            transition: 'background 0.3s, border-color 0.3s'
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)';
+          }}
+        >
+          ← BACK TO ABOUT
+        </button>
+
+        {/* Three.js canvas mount point */}
         <div ref={canvasRef} className="ls-canvas" />
         <div ref={overlayRef} className="ls-overlay" />
         <div className="ls-vignette" />
 
+        {/* ── PAGE 0: DARK SIDE ── */}
         <div className={pageClass(0)}>
           <p className="ls-dark-eyebrow">The Sith Code</p>
           <h1 className="ls-dark-title">The Dark Side</h1>
@@ -497,6 +582,7 @@ export default function LightsaberScene() {
             You are the disruptor. You thrive in the 36-hour high-pressure vacuum of the arena, fueled by the desire to dominate the leaderboard. For the Sith, code is a weapon, and virality is power. Move fast, break things, and conquer the tracks.</p>
         </div>
 
+        {/* ── PAGE 1: CHOOSE YOUR PATH ── */}
         <div className={pageClass(1)}>
           <p className="ls-mid-eyebrow">The choice is yours</p>
           <h2 className="ls-mid-title">Choose Your Path</h2>
@@ -511,21 +597,24 @@ export default function LightsaberScene() {
           </div>
         </div>
 
+        {/* ── PAGE 2: LIGHT SIDE ── */}
         <div className={pageClass(2)}>
           <p className="ls-light-eyebrow">The Jedi Code</p>
           <h1 className="ls-light-title">The Light Side</h1>
           <p className="ls-light-eyebrow">There is no emotion, there is peace</p>
           <p className="ls-light-para">
             You build for stability, order, and the advancement of the Republic. Utilizing a rule-based scoring framework, the Light Side focuses on technical depth, precision, and solving the galaxy's most pressing challenges through clean, objective engineering.
-          </p>
+</p>
         </div>
 
+        {/* Navigation dots */}
         <div className="ls-dots">
           <div className={dotClass(0)} />
           <div className={dotClass(1)} />
           <div className={dotClass(2)} />
         </div>
 
+        {/* Section label */}
         <div className="ls-label">{LABELS[current]}</div>
       </div>
     </>

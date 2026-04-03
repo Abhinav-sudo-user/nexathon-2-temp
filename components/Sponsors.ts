@@ -3,32 +3,32 @@ export const CompanyArchive = () => {
     {
       id: 1,
       name: "Microsoft",
-      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg", 
+      logoUrl: "https://via.placeholder.com/150?text=Microsoft", 
     },
     {
       id: 2,
       name: "Apple",
-      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+      logoUrl: "https://via.placeholder.com/150?text=Apple",
     },
     {
       id: 3,
       name: "NVIDIA",
-      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a4/NVIDIA_logo.svg",
+      logoUrl: "https://via.placeholder.com/150?text=NVIDIA",
     },
     {
       id: 4,
       name: "Alphabet",
-      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg", // Using Google logo for clarity
+      logoUrl: "https://via.placeholder.com/150?text=Alphabet",
     },
     {
       id: 5,
       name: "Amazon",
-      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+      logoUrl: "https://via.placeholder.com/150?text=Amazon",
     },
     {
       id: 6,
       name: "Meta",
-      logoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
+      logoUrl: "https://picsum.photos/200",
     },
   ];
   return companies;

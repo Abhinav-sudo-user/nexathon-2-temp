@@ -1,21 +1,35 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export default function CustomCursor() {
-  // 1. Track the exact X and Y of the real mouse
+  const [isMobile, setIsMobile] = useState(false);
+
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  // 2. Add spring physics to make the tracking feel buttery smooth
   const springConfig = { damping: 25, stiffness: 700 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
+    // Hide on touch devices or narrow screens
+    const checkMobile = () => {
+      setIsMobile(
+        window.matchMedia('(max-width: 768px)').matches ||
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0
+      );
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const moveCursor = (e: MouseEvent) => {
-      // Subtract 4 so the dead-center of the 8px dot sits exactly on the cursor point
       cursorX.set(e.clientX - 4);
       cursorY.set(e.clientY - 4);
     };
@@ -24,7 +38,9 @@ export default function CustomCursor() {
     return () => {
       window.removeEventListener('mousemove', moveCursor);
     };
-  }, [cursorX, cursorY]);
+  }, [cursorX, cursorY, isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <motion.div

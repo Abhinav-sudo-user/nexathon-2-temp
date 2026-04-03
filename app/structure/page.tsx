@@ -126,17 +126,22 @@ export default function Page() {
         }
 
         .sticky-target-text {
-          font-family: var(--font-bebas), sans-serif;
-          font-weight: 400;
-          font-size: clamp(1.4rem, 4vw, 3rem);
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          opacity: 0;
-          display: flex;
-          gap: 1.5ch;
-          position: relative;
-          z-index: 2; 
-        }
+  font-family: var(--font-bebas), sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 4vw, 3rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  display: flex;
+  flex-direction: row;       /* Forces horizontal layout */
+  align-items: center;       /* Aligns the baselines vertically */
+  justify-content: center;   /* Centers them horizontally */
+  white-space: nowrap;       /* Prevents wrapping to a second line */
+  line-height: 1;            /* Normalizes the bounding box for GSAP */
+  gap: 1.5ch;
+  position: relative;
+  z-index: 2; 
+}
 
         .sticky-rule {
           position: absolute;

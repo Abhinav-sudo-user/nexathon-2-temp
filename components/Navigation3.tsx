@@ -12,10 +12,10 @@ const menuItems = [
 ];
 
 const stats = [
-  { label: "TIME LEFT", value: "48:00:00" },
-  { label: "REGISTERED TEAMS", value: "45" },
-  { label: "Number of participants", value: "150" },
-  { label: "NEXT BRIEFING", value: "02h 15m" },
+  { label: "TIME LEFT", value: "--:--:--" },
+  { label: "REGISTERED TEAMS", value: "--" },
+  { label: "Number of participants", value: "--" },
+  { label: "NEXT BRIEFING", value: "--:--" },
 ];
 
 function DottedGlobeInner({ hovered }: { hovered: boolean }) {
@@ -131,7 +131,7 @@ function WireGlobe({ isMobile }: { isMobile: boolean }) {
   
   return (
     <div 
-      style={{ width: size, height: size, position: "relative", cursor: "crosshair" , overflow:"hidden" }}
+      style={{ width: size, height: size, position: "relative", cursor: "none" , overflow:"hidden" }}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
     >
@@ -185,6 +185,7 @@ export default function NexaMenu(props: any) {
 
   return (
     <>
+      
       <div style={{ position: "fixed", top: isMobile ? "1rem" : "2rem", right: isMobile ? "1rem" : "2rem", zIndex: 99998}}>
         <AnimatePresence>
           {!visible && (
@@ -199,7 +200,7 @@ export default function NexaMenu(props: any) {
                 color: "#fff",
                 padding: "0.8rem 1.5rem",
                 borderRadius: "30px",
-                cursor: "pointer",
+                cursor: "none",
                 fontFamily: "'DM Mono', monospace",
                 fontSize: "12px",
                 letterSpacing: "0.2em",
@@ -398,7 +399,7 @@ export default function NexaMenu(props: any) {
                 {["Schedule", "Mentors", "Rules", "Support"].map((link) => (
                   <span
                     key={link}
-                    style={{ cursor: "pointer", transition: "color 0.2s" }}
+                    style={{ cursor: "none", transition: "color 0.2s" }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
                     onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}
                     onClick={() => showToast(`${link} details are not open yet`)}
@@ -452,7 +453,7 @@ export default function NexaMenu(props: any) {
                     color: "rgba(255,255,255,0.5)",
                     fontSize: "12px",
                     letterSpacing: "0.15em",
-                    cursor: "pointer",
+                    cursor: "none",
                     display: "flex",
                     alignItems: "center",
                     gap: "0.5rem",
@@ -487,7 +488,7 @@ export default function NexaMenu(props: any) {
                         alignItems: "center",
                         gap: isMobile ? "1rem" : "1.5rem",
                         padding: isMobile ? "0.75rem 1rem" : "1rem 1.5rem",
-                        cursor: "pointer",
+                        cursor: "none",
                         borderLeft: isActive ? `2px solid rgba(${rgbStr},1)` : "2px solid transparent",
                         transition: "all 0.3s ease",
                         background: isActive ? `rgba(${rgbStr},0.08)` : isHovered ? `rgba(${rgbStr},0.03)` : "transparent",
@@ -539,7 +540,7 @@ export default function NexaMenu(props: any) {
                     fontSize: "12px",
                     letterSpacing: "0.25em",
                     padding: "1rem 2rem",
-                    cursor: "pointer",
+                    cursor: "none",
                     textTransform: "uppercase",
                     transition: "all 0.3s ease",
                     backdropFilter: isMobile ? "none" : "blur(10px)",
