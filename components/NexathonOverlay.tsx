@@ -29,10 +29,13 @@ export default function NexathonOverlay() {
         .responsive-card {
           max-width: 680px;
           width: 100%;
-          background: rgba(0, 0, 0, 0.45); /* Blur removed */
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
           padding: clamp(1.5rem, 5vw, 3rem);
           border-radius: 1.5rem;
           border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
           text-align: left; /* Desktop: Text aligns left */
           box-sizing: border-box;
         }

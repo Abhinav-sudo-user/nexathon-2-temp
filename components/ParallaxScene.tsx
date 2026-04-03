@@ -20,9 +20,9 @@ import TerminalScene from './TerminalScene';
 const Galaxy = dynamic(() => import('./Galaxy'), { ssr: false });
 const DeathStar = dynamic(() => import('./DeathStar'), { ssr: false });
 
-// Cinematic easing
-const CINEMATIC_EASE = [0.016, 0.02, 0.82, 1] as const;
-const CINEMATIC_DURATION = 2.0;
+// Cinematic easing — very smooth ease-out for fluid motion
+const CINEMATIC_EASE = [0.25, 0.46, 0.45, 0.94] as const;
+const CINEMATIC_DURATION = 3.2;
 
 // Assets to preload — the heavy 3D models
 const PRELOAD_ASSETS = [
@@ -152,12 +152,13 @@ export default function ParallaxScene() {
   }, [isEntering, mouseX, mouseY]);
 
   // --- ANIMATION TRIGGERS ---
-  const handleEnterTerminal = () => {
-    setIsEntering(true); 
+  const handleEnterTerminal = useCallback(() => {
+    setIsEntering(true);
+    // Navigate slightly before animation fully ends so the flash covers the page swap
     setTimeout(() => {
       router.push('/nexathon');
-    }, CINEMATIC_DURATION * 1000);
-  };
+    }, (CINEMATIC_DURATION - 0.3) * 1000);
+  }, [router]);
 
   const handleExitTerminal = () => {
     setIsTerminalActive(false); 
@@ -266,22 +267,21 @@ export default function ParallaxScene() {
       {/* --- THE MAIN 3D SCENE (always mounted so it can load in background) --- */}
       {!isTerminalActive && (
         <>
-          {/* LAYER 1: V2 TEXT */}
+          {/* LAYER 1: V2 TEXT — drifts out gently */}
           <motion.div
             className="absolute inset-0 z-5 flex items-center justify-center pointer-events-none"
             style={{ x: v2X, y: v2Y }}
             animate={isEntering ? { 
-              scale: 5, 
+              scale: 2.5, 
               opacity: 0, 
-              rotateZ: -180, 
+              rotateZ: -15, 
               filter: 'blur(8px)' 
             } : {}}
             transition={{ 
-              duration: CINEMATIC_DURATION, 
+              duration: CINEMATIC_DURATION * 0.8, 
               ease: CINEMATIC_EASE,
               opacity: { 
-                duration: CINEMATIC_DURATION * 0.5, 
-                delay: CINEMATIC_DURATION * 0.5,
+                duration: CINEMATIC_DURATION * 0.6,
                 ease: CINEMATIC_EASE 
               },
             }}
@@ -291,22 +291,23 @@ export default function ParallaxScene() {
             </span>
           </motion.div>
 
-          {/* LAYER 2: THE DEATH STAR */}
+          {/* LAYER 2: THE DEATH STAR — zooms smoothly past camera */}
           <motion.div 
             className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
             style={{ x: midX, y: midY }}
             animate={isEntering ? { 
-              scale: 20, 
+              scale: 6, 
               opacity: 0, 
-              filter: 'blur(10px)' 
+              filter: 'blur(4px)' 
             } : {}}
             transition={{ 
-              duration: CINEMATIC_DURATION, 
+              duration: CINEMATIC_DURATION * 0.9,
+              delay: 0.1,
               ease: CINEMATIC_EASE,
               opacity: { 
-                duration: CINEMATIC_DURATION * 0.4, 
-                delay: CINEMATIC_DURATION * 0.6,
-                ease: 'easeIn'
+                duration: CINEMATIC_DURATION * 0.6, 
+                delay: CINEMATIC_DURATION * 0.3,
+                ease: CINEMATIC_EASE
               },
             }}
           >
@@ -315,23 +316,24 @@ export default function ParallaxScene() {
             </div>
           </motion.div>
 
-          {/* LAYER 3: FOREGROUND TEXT & BUTTON */}
+          {/* LAYER 3: FOREGROUND TEXT & BUTTON — scales up and fades */}
           <motion.div 
             className="relative z-20 flex flex-col items-center justify-center h-full pointer-events-none"
             style={{ x: textX, y: textY }}
             animate={isEntering ? { 
-              scale: 15,          
-              rotateZ: 180,       
+              scale: 3.5,          
+              rotateZ: 10,       
               opacity: 0,         
-              filter: "blur(20px)" 
+              filter: 'blur(10px)' 
             } : { scale: 1, rotateZ: 0, opacity: 1 }}
             transition={{ 
-              duration: CINEMATIC_DURATION, 
+              duration: CINEMATIC_DURATION * 0.85,
+              delay: 0.05,
               ease: CINEMATIC_EASE,
               opacity: { 
-                duration: CINEMATIC_DURATION * 0.35, 
-                delay: CINEMATIC_DURATION * 0.65,
-                ease: 'easeIn'
+                duration: CINEMATIC_DURATION * 0.5, 
+                delay: CINEMATIC_DURATION * 0.3,
+                ease: CINEMATIC_EASE
               },
             }}
           >
@@ -379,6 +381,23 @@ export default function ParallaxScene() {
               </motion.div>
             )}
           </motion.div>
+
+          {/* LAYER 4: SMOOTH BLACK FADE — covers the page transition */}
+          <AnimatePresence>
+            {isEntering && (
+              <motion.div
+                key="warp-fade"
+                className="absolute inset-0 z-50 pointer-events-none bg-black"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ 
+                  duration: 1.0, 
+                  delay: CINEMATIC_DURATION * 0.6,
+                  ease: [0.4, 0.0, 0.2, 1.0]
+                }}
+              />
+            )}
+          </AnimatePresence>
         </>
       )}
     </div>

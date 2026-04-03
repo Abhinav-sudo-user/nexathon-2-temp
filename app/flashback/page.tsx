@@ -4,17 +4,14 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Nexathon.css';
+import { CompanyArchive } from '../../components/Sponsors';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SPONSORS = [
-  { src: './src/assets/appwrite.png', alt: 'Appwrite' },
-  { src: './src/assets/codecrafter.webp', alt: 'CodeCrafter' },
-  { src: './src/assets/fft.png', alt: 'FFT' },
-  { src: './src/assets/fx-header.png', alt: 'FX' },
-  { src: './src/assets/sprintlogo.png', alt: 'Sprint' },
-  { src: './src/assets/xyz.svg', alt: 'XYZ' },
-];
+const SPONSORS = CompanyArchive().map(company => ({
+  src: company.logoUrl,
+  alt: company.name
+}));
 
 export default function Nexathon() {
   const heroRef = useRef<HTMLElement>(null);

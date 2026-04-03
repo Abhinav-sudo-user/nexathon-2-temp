@@ -185,9 +185,6 @@ export default function NexaMenu(props: any) {
 
   return (
     <>
-    <style>
-      {`*{overflow:hidden}`}
-    </style>
       <div style={{ position: "fixed", top: isMobile ? "1rem" : "2rem", right: isMobile ? "1rem" : "2rem", zIndex: 99998}}>
         <AnimatePresence>
           {!visible && (
