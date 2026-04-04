@@ -8,7 +8,6 @@ export default function NexathonPage() {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    // Dynamically import GSAP and Three.js to avoid SSR issues
     let cleanupFns: (() => void)[] = [];
 
     const init = async () => {
@@ -19,11 +18,9 @@ export default function NexathonPage() {
 
       gsap.registerPlugin(ScrollTrigger);
 
-      // Prevent browser from restoring scroll position which throws off GSAP measurements
       window.history.scrollRestoration = 'manual';
       window.scrollTo(0, 0);
 
-      // Intersection Observer for fade-up elements
       const obs = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => {
@@ -35,19 +32,18 @@ export default function NexathonPage() {
       document.querySelectorAll('.fade-up').forEach((el) => obs.observe(el));
       cleanupFns.push(() => obs.disconnect());
 
-      // Three.js Setup
       const canvasContainer = document.getElementById('canvas-container');
       if (!canvasContainer) return;
 
       const scene = new THREE.Scene();
+      const isMobile = window.innerWidth < 768;
+
       const camera = new THREE.PerspectiveCamera(
         75,
         canvasContainer.clientWidth / canvasContainer.clientHeight,
         0.1,
         1000
       );
-
-      const isMobile = window.innerWidth < 768;
       camera.position.z = isMobile ? 12 : 8;
       camera.position.y = 1;
 
@@ -63,8 +59,6 @@ export default function NexathonPage() {
 
       let falcon: Group | null = null;
       let animFrameId: number;
-
-      const loader = new GLTFLoader();
 
       const initScrollAnimations = () => {
         gsap.set('.seeking', { x: isMobile ? -200 : -500, opacity: 0 });
@@ -84,6 +78,7 @@ export default function NexathonPage() {
 
         const purposeTL = gsap.timeline({
           scrollTrigger: {
+            id: 'purpose-st',
             trigger: '#purpose',
             start: 'top top',
             end: 'bottom bottom',
@@ -97,7 +92,7 @@ export default function NexathonPage() {
 
         purposeTL
           .to('.seeking', { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0)
-          .to('.talent', { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0)
+          .to('.talent',  { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0)
           .to(
             '.seeking',
             { y: isMobile ? -40 : -70, scale: 0.5, duration: 0.5, ease: 'power2.inOut' },
@@ -130,13 +125,6 @@ export default function NexathonPage() {
             { opacity: 1, y: 0, stagger: 0.15, duration: 0.4, ease: 'sine.out' },
             1.1
           );
-
-        if (falcon) {
-          purposeTL
-            .to(camera.position, { z: isMobile ? 4 : 0.2, y: 0, ease: 'none', duration: 0.6 }, 0.2)
-            .to(falcon.rotation, { y: Math.PI * 2, ease: 'power2.in', duration: 0.6 }, 0.2);
-        }
-
         const roundsTL = gsap.timeline({
           scrollTrigger: {
             trigger: '.rounds-outer',
@@ -197,10 +185,27 @@ export default function NexathonPage() {
           .to('#node-eval .tl-label', labelOn, '<');
       };
 
+      setTimeout(() => {
+        initScrollAnimations();
+        ScrollTrigger.refresh();
+      }, 100);
+
+      const animate = () => {
+        animFrameId = requestAnimationFrame(animate);
+        if (falcon) falcon.rotation.y += 0.0015;
+        const rect = canvasContainer.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          renderer.render(scene, camera);
+        }
+      };
+      animate();
+
+      const loader = new GLTFLoader();
       loader.load(
         '/models/millennium_falcon.glb',
         (gltf) => {
           falcon = gltf.scene;
+
           const box = new THREE.Box3().setFromObject(falcon);
           const center = box.getCenter(new THREE.Vector3());
           falcon.position.sub(center);
@@ -217,31 +222,33 @@ export default function NexathonPage() {
 
           scene.add(falcon);
           canvasContainer.style.opacity = '1';
-          // Small delay so Next.js layout is fully painted before GSAP measures positions
-          setTimeout(() => {
-            initScrollAnimations();
-            ScrollTrigger.refresh();
-          }, 100);
-        },
-        undefined,
-        () => {
-          setTimeout(() => {
-            initScrollAnimations();
-            ScrollTrigger.refresh();
-          }, 100);
+
+          const isMob = window.innerWidth < 768;
+          const sharedST = {
+            trigger: '#purpose',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.7,
+          };
+
+          gsap.to(camera.position, {
+            z: isMob ? 4 : 0.2,
+            y: 0,
+            ease: 'none',
+            duration: 0.6,
+            scrollTrigger: sharedST,
+          });
+
+          gsap.to(falcon.rotation, {
+            y: Math.PI * 2,
+            ease: 'power2.in',
+            duration: 0.6,
+            scrollTrigger: sharedST,
+          });
+
+          ScrollTrigger.refresh();
         }
       );
-
-      const animate = () => {
-        animFrameId = requestAnimationFrame(animate);
-        if (falcon) falcon.rotation.y += 0.0015;
-        // Only render if canvas is in viewport
-        const rect = canvasContainer.getBoundingClientRect();
-        if (rect.bottom > 0 && rect.top < window.innerHeight) {
-          renderer.render(scene, camera);
-        }
-      };
-      animate();
 
       const handleResize = () => {
         const width = canvasContainer.clientWidth;
@@ -294,17 +301,12 @@ export default function NexathonPage() {
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Tailwind preflight sets html,body to height:100% which makes body
-           exactly viewport-tall — locking page scroll to inner elements only.
-           Override so window stays the scroll container. */
         html, body {
           height: auto !important;
           min-height: 100%;
           scroll-behavior: smooth;
         }
 
-        /* globals.css has * { overflow-y: scroll } which makes every element
-           scrollable. Override for elements that must NOT be scroll containers. */
         .hero, #canvas-container, .hero-grid-bg,
         .hero-content-wrapper, .nexathon-nav, .purpose-wrapper,
         .sticky-box, .heading-group, .rounds-outer,
@@ -526,7 +528,6 @@ export default function NexathonPage() {
           position: relative;
           background: var(--bg);
           height: 200vh;
-          /* clip-path clips visually without creating a scroll container */
           clip-path: inset(0);
         }
 
