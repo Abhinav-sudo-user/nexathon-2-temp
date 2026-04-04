@@ -1,35 +1,44 @@
+// E:\nexathon-2-temp\components\Sponsors.ts
+
+import appwriteLogo from "../app/flashback/src/assets/appwrite.svg";
+import codecrafterLogo from "../app/flashback/src/assets/codecrafter.webp";
+import fftLogo from "../app/flashback/src/assets/fft.png";
+import fxHeaderLogo from "../app/flashback/src/assets/fx-header.png";
+import sprintLogo from "../app/flashback/src/assets/sprintlogo.png";
+import xyzLogo from "../app/flashback/src/assets/xyz.svg";
+
 export const CompanyArchive = () => {
   const companies = [
     {
       id: 1,
-      name: "Microsoft",
-      logoUrl: "https://via.placeholder.com/150?text=Microsoft", 
+      name: ".xyz",
+      logoUrl: xyzLogo.src || xyzLogo,
     },
     {
       id: 2,
-      name: "Apple",
-      logoUrl: "https://via.placeholder.com/150?text=Apple",
+      name: "Appwrite",
+      logoUrl: appwriteLogo.src || appwriteLogo,
     },
     {
       id: 3,
-      name: "NVIDIA",
-      logoUrl: "https://via.placeholder.com/150?text=NVIDIA",
+      name: "CodeCrafter",
+      logoUrl: codecrafterLogo.src || codecrafterLogo,
     },
     {
       id: 4,
-      name: "Alphabet",
-      logoUrl: "https://via.placeholder.com/150?text=Alphabet",
+      name: "FFT",
+      logoUrl: fftLogo.src || fftLogo,
     },
     {
       id: 5,
-      name: "Amazon",
-      logoUrl: "https://via.placeholder.com/150?text=Amazon",
+      name: "FX Header",
+      logoUrl: fxHeaderLogo.src || fxHeaderLogo,
     },
     {
       id: 6,
-      name: "Meta",
-      logoUrl: "https://picsum.photos/200",
+      name: "Sprint",
+      logoUrl: sprintLogo.src || sprintLogo,
     },
   ];
   return companies;
-}
+};
