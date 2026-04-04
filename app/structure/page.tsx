@@ -93,38 +93,13 @@ export default function NexathonPage() {
         purposeTL
           .to('.seeking', { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0)
           .to('.talent',  { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, 0)
-          .to(
-            '.seeking',
-            { y: isMobile ? -40 : -70, scale: 0.5, duration: 0.5, ease: 'power2.inOut' },
-            0.35
-          )
-          .to(
-            '.talent',
-            {
-              y: isMobile ? 40 : 70,
-              scale: 0.5,
-              webkitTextStroke: '1px rgba(255,255,255,1)',
-              duration: 0.5,
-              ease: 'power2.inOut',
-            },
-            0.35
-          )
+          .to('.seeking', { y: isMobile ? -40 : -70, scale: 0.5, duration: 0.5, ease: 'power2.inOut' }, 0.35)
+          .to('.talent',  { y: isMobile ? 40 : 70, scale: 0.5, webkitTextStroke: '1px rgba(255,255,255,1)', duration: 0.5, ease: 'power2.inOut' }, 0.35)
           .to('.real-tag', { opacity: 1, scale: 1.1, duration: 0.5, ease: 'power2.out' }, 0.35)
-          .to(
-            '.heading-group',
-            { y: '-10vh', scale: 0.8, duration: 0.45, ease: 'power3.inOut' },
-            0.75
-          )
-          .to(
-            '.content-reveal',
-            { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' },
-            0.95
-          )
-          .to(
-            '.reveal-item',
-            { opacity: 1, y: 0, stagger: 0.15, duration: 0.4, ease: 'sine.out' },
-            1.1
-          );
+          .to('.heading-group', { y: '-10vh', scale: 0.8, duration: 0.45, ease: 'power3.inOut' }, 0.75)
+          .to('.content-reveal', { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 0.95)
+          .to('.reveal-item', { opacity: 1, y: 0, stagger: 0.15, duration: 0.4, ease: 'sine.out' }, 1.1);
+
         const roundsTL = gsap.timeline({
           scrollTrigger: {
             trigger: '.rounds-outer',
@@ -301,10 +276,27 @@ export default function NexathonPage() {
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html {
+          overflow-x: hidden;
+          touch-action: pan-y;
+          -ms-touch-action: pan-y;
+        }
+
         html, body {
           height: auto !important;
           min-height: 100%;
           scroll-behavior: smooth;
+          max-width: 100%;
+          overscroll-behavior-x: none;
+        }
+
+        body {
+          background: var(--bg);
+          color: var(--text);
+          font-family: 'DM Sans', sans-serif;
+          overflow-x: hidden;
+          width: 100%;
+          position: relative;
         }
 
         .hero, #canvas-container, .hero-grid-bg,
@@ -313,13 +305,6 @@ export default function NexathonPage() {
         .rounds-sticky-wrapper {
           overflow-y: visible !important;
           overflow-x: visible !important;
-        }
-
-        body {
-          background: var(--bg);
-          color: var(--text);
-          font-family: 'DM Sans', sans-serif;
-          overflow-x: hidden;
         }
 
         .nexathon-nav {
@@ -385,6 +370,7 @@ export default function NexathonPage() {
           justify-content: flex-end;
           padding: 60px 100px 100px 80px;
           position: relative;
+          overflow: hidden;
         }
 
         @media (max-width: 768px) {
