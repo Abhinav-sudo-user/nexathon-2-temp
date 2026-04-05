@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-md">
+    <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-md">
       <div className="flex flex-col items-center">
         {/* Futuristic Spinner */}
         <div className="relative w-20 h-20">
